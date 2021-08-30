@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 
 import employee.management.system.EMSEnums.Department;
 import employee.management.system.EMSEnums.Position;
+import employee.management.system.EMSEnums.Contract;
 
 public class EmployeeManagement {
 
@@ -28,6 +29,7 @@ public class EmployeeManagement {
 		FileReader fileReader = null;
 		BufferedReader reader = null;
 		List <Employee> employeeList = new ArrayList<Employee>();
+		Employee employeeDetail = null;
 		Scanner operationChoice = new Scanner(System.in);
 		
 		if(objectFile.exists()) {
@@ -46,9 +48,17 @@ public class EmployeeManagement {
 						
 						String [] employeeDetails = line.split(" ");
 						
-						Employee employee = new Employee(Integer.parseInt(employeeDetails[0]), employeeDetails[1], employeeDetails[2], employeeDetails[3], Department.valueOf(employeeDetails[4]), Double.parseDouble(employeeDetails[5]), Position.valueOf(employeeDetails[6]));
-					
-						employeeList.add(employee);
+						if (employeeDetails.length == 7) {
+							employeeDetail = new Employee(Integer.parseInt(employeeDetails[0]), employeeDetails[1], employeeDetails[2], employeeDetails[3], Department.valueOf(employeeDetails[4]), Double.parseDouble(employeeDetails[5]), Position.valueOf(employeeDetails[6]));
+							
+						}
+						
+						if (employeeDetails.length == 8) {
+							employeeDetail = new ContractEmployee(Integer.parseInt(employeeDetails[0]), employeeDetails[1], employeeDetails[2], employeeDetails[3], Department.valueOf(employeeDetails[4]), Double.parseDouble(employeeDetails[5]), Position.valueOf(employeeDetails[6]), Contract.valueOf(employeeDetails[7]));
+							
+						}
+						
+						employeeList.add(employeeDetail);
 					}
 					
 				} catch(FileNotFoundException e) {
@@ -84,7 +94,7 @@ public class EmployeeManagement {
 				break;
 			case 2:try {	
 			
-					System.out.println("\nEnter the following details without any whitespace to ADD list:\n");
+					System.out.println("\nEnter the required details without any whitespace to ADD new Employee:\n");
 					System.out.println("Enter ID :");
 					int id = operationChoice.nextInt();
 					System.out.println("Enter FirstName :");
@@ -99,8 +109,19 @@ public class EmployeeManagement {
 					double salary = operationChoice.nextDouble();
 					System.out.println("Enter Position (ENTRY_LEVEL/MID_SENIOR/SENIOR) :");
 					Position position = Position.valueOf(operationChoice.next().toUpperCase());
+					
+					System.out.println("Is this employee being hired on Contract?(Y/N)");
+					char contractChoice = operationChoice.next().charAt(0);
+					
+					if (contractChoice == 'Y' || contractChoice == 'y') {
+						System.out.println("Enter Contract Type (ANNUAL/SEMI_ANNUAL) :");
+						Contract contractType = Contract.valueOf(operationChoice.next().toUpperCase());
+						
+						employeeList.add(new ContractEmployee(id, firstName, lastName, contact, department, salary, position, contractType));
+					}else {
+						employeeList.add(new Employee(id, firstName, lastName, contact, department, salary, position));
+					}
 		
-					employeeList.add(new Employee(id, firstName, lastName, contact, department, salary, position));
 					
 					System.out.println("Successfully Added Employee in the EMS!!");
 				}catch(IllegalArgumentException e) {

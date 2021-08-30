@@ -9,4 +9,8 @@ public class EMSEnums {
 		INFOSECURITY, INFOTECH, FINANCECENTER
 	}
 	
+	public static enum Contract {
+		ANNUAL, SEMI_ANNUAL
+	}
+	
 }
